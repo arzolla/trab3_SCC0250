@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #########################################
 ##### SCC0250 - Computação Gráfica ######
-####### Trabalho 2 - Cenário 3D #########
+####### Trabalho 3 - Iluminação #########
 #########################################
 #### Aluno: Victor de Mattos Arzolla ####
 #### NUSP: 9039312 ######################
