@@ -15,6 +15,7 @@ def load_model_from_file(filename):
     """Loads a Wavefront OBJ file. """
     objects = {}
     vertices = []
+    normals = []
     texture_coords = []
     faces = []
 
@@ -31,6 +32,9 @@ def load_model_from_file(filename):
         if values[0] == 'v':
             vertices.append(values[1:4])
 
+        ### recuperando vertices
+        if values[0] == 'vn':
+            normals.append(values[1:4])
 
         ### recuperando coordenadas de textura
         elif values[0] == 'vt':
@@ -42,20 +46,23 @@ def load_model_from_file(filename):
         elif values[0] == 'f':
             face = []
             face_texture = []
+            face_normals = []
             for v in values[1:]:
                 w = v.split('/')
                 face.append(int(w[0]))
+                face_normals.append(int(w[2]))
                 if len(w) >= 2 and len(w[1]) > 0:
                     face_texture.append(int(w[1]))
                 else:
                     face_texture.append(0)
 
-            faces.append((face, face_texture, material))
+            faces.append((face, face_texture, face_normals, material))
 
     model = {}
     model['vertices'] = vertices
     model['texture'] = texture_coords
     model['faces'] = faces
+    model['normals'] = normals
 
     return model
 
@@ -89,6 +96,7 @@ def tex_path(mod,tex):
 # Lista de vertices e coordenadas da textura
 vertices_list = []    
 textures_coord_list = []
+normals_list = []  
 
 # contador absoluto de texturas inseridas
 texture_counter = 0
@@ -119,14 +127,16 @@ def declare_obj(model, textures):
     faces_visited = []
     vertex_index[model] = []
     for face in modelo['faces']:
-        if face[2] not in faces_visited:
-            print("{:27} {} {:5}".format(face[2],'- Vertice inicial:', len(vertices_list)))
+        if face[3] not in faces_visited:
+            print("{:27} {} {:5}".format(face[3],'- Vertice inicial:', len(vertices_list)))
             vertex_index[model].append(len(vertices_list))
-            faces_visited.append(face[2])
+            faces_visited.append(face[3])
         for vertice_id in face[0]:
             vertices_list.append( modelo['vertices'][vertice_id-1] )
         for texture_id in face[1]:
             textures_coord_list.append( modelo['texture'][texture_id-1] )
+        for normal_id in face[2]:
+            normals_list.append( modelo['normals'][normal_id-1] )
     print("{} {:20} {} {:1}".format('Fim de',model,'- Vertice final  :', len(vertices_list)))  
     vertex_index[model].append(len(vertices_list))
 
@@ -160,6 +170,24 @@ def draw_obj(modelo, mat_model):
 
         # desenha o modelo
         glDrawArrays(GL_TRIANGLES, vertex_index[modelo][i],vertex_index[modelo][1+i]-vertex_index[modelo][i] ) ## renderizando
+
+
+def set_light(ka, kd, ks, ns):
+    
+    loc_ka = glGetUniformLocation(program, "ka") # recuperando localizacao da variavel ka na GPU
+    glUniform1f(loc_ka, ka) ### envia ka pra gpu
+    
+    loc_kd = glGetUniformLocation(program, "kd") # recuperando localizacao da variavel kd na GPU
+    glUniform1f(loc_kd, kd) ### envia kd pra gpu    
+    
+    loc_ks = glGetUniformLocation(program, "ks") # recuperando localizacao da variavel ks na GPU
+    glUniform1f(loc_ks, ks) ### envia ns pra gpu        
+    
+    loc_ns = glGetUniformLocation(program, "ns") # recuperando localizacao da variavel ns na GPU
+    glUniform1f(loc_ns, ns) ### envia ns pra gpu            
+    
+
+
 
 
 # Matriz model
@@ -279,3 +307,47 @@ def draw_scene():
     # insere alien
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     draw_obj('alien.obj', mat_model)
+
+
+def draw_mount():
+    # rotacao
+    angle = 0.0;
+    r_x = 0.0; r_y = 0.0; r_z = 1.0;
+    # translacao
+    t_x = 0.0 ; t_y = -2.0; t_z = 0.0;
+    # escala
+    s_x = 1.0; s_y = 1.0; s_z = 1.0;
+    # insere floresta e montanhas ao redor
+    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
+    loc_model = glGetUniformLocation(program, "model")
+    glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
+
+    #### define parametros de ilumincao do modelo
+    ka = 0.3 # coeficiente de reflexao ambiente do modelo
+    kd = 0.3 # coeficiente de reflexao difusa do modelo
+    ks = 0.9 # coeficiente de reflexao especular do modelo
+    ns = 64.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+
+
+       
+    # Insere os modelos de acordo com o número de indices de vértice
+    # Caso haja por exemplo três índices, isso significa q há dois 
+    # objetos a serem inseridos
+    modelo = 'pine_forest.obj'
+    for i in range(len(vertex_index[modelo])-1):
+        #define id da textura do modelo
+        glBindTexture(GL_TEXTURE_2D, texture_index[modelo][i])
+
+        # desenha o modelo
+        glDrawArrays(GL_TRIANGLES, vertex_index[modelo][i],vertex_index[modelo][1+i]-vertex_index[modelo][i] ) ## renderizando
+
+
+    modelo = 'mountain.obj'
+    for i in range(len(vertex_index[modelo])-1):
+        #define id da textura do modelo
+        glBindTexture(GL_TEXTURE_2D, texture_index[modelo][i])
+
+        # desenha o modelo
+        glDrawArrays(GL_TRIANGLES, vertex_index[modelo][i],vertex_index[modelo][1+i]-vertex_index[modelo][i] ) ## renderizando
