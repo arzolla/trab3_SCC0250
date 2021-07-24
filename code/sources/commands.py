@@ -103,15 +103,18 @@ def commands():
         # Tecla L para ativar/desativar luz colorida 
         if key == 76 and action==1:
             light_mode = not(light_mode)
+            print('Luzes coloridas:', light_mode)
         # Tecla P para aumentar luz ambiente
         if key == 80 and (action==1 or action==2): # tecla P
-            ka_mult *= 1.2
+            ka_mult += 0.2
+            print('Luz ambiente:', ka_mult)
         # Tecla U para diminuir luz ambiente
         if key == 85 and (action==1 or action==2): # tecla U
-            ka_mult *= 0.8
+            ka_mult -= 0.2
+            print('Luz ambiente:', ka_mult)
 
-        print('ka_mult',ka_mult)
-        print('tecla',key,scancode,action,mods)
+        # print('ka_mult',ka_mult)
+        # print('tecla',key,scancode,action,mods)
                      
     # Define eventos do mouse
     def mouse_event(window, xpos, ypos):
