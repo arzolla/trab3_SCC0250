@@ -98,7 +98,7 @@ fragment_code = """
             
             // aplicando o modelo de iluminacao
             vec4 texture = texture2D(samplerTexture, out_texture);
-            vec4 result = vec4(( diffuse1 + specular1),1.0) * texture; // aplica iluminacao
+            vec4 result = vec4((ambient + diffuse1 + specular1),1.0) * texture; // aplica iluminacao
             //vec4 result = vec4((ambient + diffuse1 + diffuse2 + specular1 + specular2),1.0) * texture; // aplica iluminacao
             if(result.a < 0.3)
                 discard;

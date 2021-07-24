@@ -240,10 +240,10 @@ def draw_sky(rotacao_inc):
 # Função para desenhar as naves espaciais
 def draw_spaceships(inc):
     # rotacao
-    angle = 0.0;
+    angle = inc;
     r_x = 0.0; r_y = 0.0; r_z = 1.0;
     # translacao
-    t_x = 10*math.sin(inc/10) ; t_y = 10.0; t_z = 10*math.cos(inc/10);
+    t_x = 10*math.sin(inc/50) ; t_y = 10.0; t_z = 10*math.cos(inc/50);
     # escala
     s_x = 1.0; s_y = 1.0; s_z = 1.0;
 
