@@ -34,7 +34,7 @@ ___
 
 ## Instruções:
 
-Execute o arquivo ```/code/trab2.py``` para rodar o programa
+Execute o arquivo ```/code/trab3.py``` para rodar o programa
 
 **Controles:**
 
