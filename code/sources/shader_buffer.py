@@ -10,7 +10,12 @@ import OpenGL.GL.shaders
 vertex_code = """
         attribute vec3 position;
         attribute vec2 texture_coord;
+        attribute vec3 normals;
+        
+       
         varying vec2 out_texture;
+        varying vec3 out_fragPos;
+        varying vec3 out_normal;
                 
         uniform mat4 model;
         uniform mat4 view;
@@ -19,20 +24,100 @@ vertex_code = """
         void main(){
             gl_Position = projection * view * model * vec4(position,1.0);
             out_texture = vec2(texture_coord);
+            out_fragPos = vec3(model * vec4(position, 1.0));
+            out_normal = normals;            
         }
         """
 
 # Código do shader de fragmento
 fragment_code = """
-        uniform vec4 color;
-        varying vec2 out_texture;
+
+        // parametros da iluminacao ambiente e difusa
+        uniform vec3 lightPos1; // define coordenadas de posicao da luz #1
+        uniform vec3 lightPos2; // define coordenadas de posicao da luz #2
+        uniform float ka; // coeficiente de reflexao ambiente
+        uniform float kd; // coeficiente de reflexao difusa
+        
+        
+        // parametros da iluminacao especular
+        uniform vec3 viewPos; // define coordenadas com a posicao da camera/observador
+        uniform float ks; // coeficiente de reflexao especular
+        uniform float ns; // expoente de reflexao especular
+        
+        // extra
+        uniform float light_mode; // ativar iluminação colorida
+
+
+        // parametro com a cor da(s) fonte(s) de iluminacao
+        vec3 lightColor = vec3(1.0, 1.0, 1.0);
+        vec3 lightColor1 = vec3(1.0, 0.3, 0.3);
+        vec3 lightColor2 = vec3(0.3, 1.0, 0.3);
+
+        // parametros recebidos do vertex shader
+        varying vec2 out_texture; // recebido do vertex shader
+        varying vec3 out_normal; // recebido do vertex shader
+        varying vec3 out_fragPos; // recebido do vertex shader
         uniform sampler2D samplerTexture;
         
+
+        
         void main(){
+            
+            if(light_mode == 0){
+                lightColor1 = lightColor;
+                lightColor2 = lightColor;
+            }
+
+
+
+            // calculando reflexao ambiente
+            vec3 ambient = ka * lightColor;             
+        
+            ////////////////////////
+            // Luz #1
+            ////////////////////////
+            
+            // calculando reflexao difusa
+            vec3 norm1 = normalize(out_normal); // normaliza vetores perpendiculares
+            vec3 lightDir1 = normalize(lightPos1 - out_fragPos); // direcao da luz
+            float diff1 = max(dot(norm1, lightDir1), 0.0); // verifica limite angular (entre 0 e 90)
+            vec3 diffuse1 = kd * diff1 * lightColor1; // iluminacao difusa
+            
+            // calculando reflexao especular
+            vec3 viewDir1 = normalize(viewPos - out_fragPos); // direcao do observador/camera
+            vec3 reflectDir1 = reflect(-lightDir1, norm1); // direcao da reflexao
+            float spec1 = pow(max(dot(viewDir1, reflectDir1), 0.0), ns);
+            vec3 specular1 = ks * spec1 * lightColor1;    
+            
+            
+            ////////////////////////
+            // Luz #2
+            ////////////////////////
+            
+            // calculando reflexao difusa
+            vec3 norm2 = normalize(out_normal); // normaliza vetores perpendiculares
+            vec3 lightDir2 = normalize(lightPos2 - out_fragPos); // direcao da luz
+            float diff2 = max(dot(norm2, lightDir2), 0.0); // verifica limite angular (entre 0 e 90)
+            vec3 diffuse2 = kd * diff2 * lightColor2; // iluminacao difusa
+            
+            // calculando reflexao especular
+            vec3 viewDir2 = normalize(viewPos - out_fragPos); // direcao do observador/camera
+            vec3 reflectDir2 = reflect(-lightDir2, norm2); // direcao da reflexao
+            float spec2 = pow(max(dot(viewDir2, reflectDir2), 0.0), ns);
+            vec3 specular2 = ks * spec2 * lightColor2;    
+            
+            ////////////////////////
+            // Combinando as duas fontes
+            ////////////////////////
+            
+            // aplicando o modelo de iluminacao
             vec4 texture = texture2D(samplerTexture, out_texture);
-            if(texture.a < 0.5)
+            //vec4 result = vec4((ambient + diffuse1 + specular1),1.0) * texture; // aplica iluminacao
+            vec4 result = vec4((ambient + 0.6*(diffuse1 + specular1) + diffuse2 + specular2),1.0) * texture; // aplica iluminacao
+            if(result.a < 0.3)
                 discard;
-            gl_FragColor = texture;
+            gl_FragColor = result;
+
         }
         """
 
@@ -97,7 +182,6 @@ def vertex_buffer(vertices):
     glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
 
     # Bind the position attribute
-    # --------------------------------------
     stride = vertices.strides[0]
     offset = ctypes.c_void_p(0)
 
@@ -115,7 +199,6 @@ def texture_buffer(textures):
     glBufferData(GL_ARRAY_BUFFER, textures.nbytes, textures, GL_STATIC_DRAW)
 
     # Bind the position attribute
-    # --------------------------------------
     stride = textures.strides[0]
     offset = ctypes.c_void_p(0)
 
@@ -124,6 +207,19 @@ def texture_buffer(textures):
 
     glVertexAttribPointer(loc_texture_coord, 2, GL_FLOAT, False, stride, offset)
 
+# Função para configurar os buffers de iluminação
+def normals_buffer(normals):
 
+    # Upload coordenadas normals de cada vertice
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[2])
+    glBufferData(GL_ARRAY_BUFFER, normals.nbytes, normals, GL_STATIC_DRAW)
 
+    # Bind the position attribute  
+    stride = normals.strides[0]
+    offset = ctypes.c_void_p(0)
+
+    loc_normals_coord = glGetAttribLocation(program, "normals")
+    glEnableVertexAttribArray(loc_normals_coord)
+    
+    glVertexAttribPointer(loc_normals_coord, 3, GL_FLOAT, False, stride, offset)
 

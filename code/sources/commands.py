@@ -53,6 +53,10 @@ cameraFront = glm.vec3(0.0,  0.0, -1.0);
 cameraUp    = glm.vec3(0.0,  1.0,  0.0);
 cameraPos_antes = glm.vec3(0.0,  1.0,  0.0);
 
+# Iluminação
+light_mode = 0
+ka_mult = 1
+
 def commands():
 
     # Define eventos do teclado
@@ -76,8 +80,8 @@ def commands():
             cameraPos += .7*glm.normalize(glm.cross(cameraFront, cameraUp)) * cameraSpeed
             
         # limitando altura da camera dentro do cenário
-        if cameraPos[1] <= -0.092 : cameraPos[1] = -0.092
-        if cameraPos[1] >= 17 : cameraPos[1] = 17
+        # if cameraPos[1] <= -0.092 : cameraPos[1] = -0.092
+        # if cameraPos[1] >= 17 : cameraPos[1] = 17
         
         # Raio máximo do movimento no plano
         r_max = 20
@@ -85,38 +89,32 @@ def commands():
         r_atual = ((cameraPos[0]**2) + (cameraPos[2]**2))**(1/2)
 
         # Se raio atual for menor q raio maximo
-        if r_atual <= r_max:
-            # Salva posição atual
-            cameraPos_antes[0] = cameraPos[0]
-            cameraPos_antes[2] = cameraPos[2]
-        else: # Se raio atual for maior q raio maximo
-            # Mantém a posição anterior
-            cameraPos[0] = cameraPos_antes[0]
-            cameraPos[2] = cameraPos_antes[2]
+        # if r_atual <= r_max:
+        #     # Salva posição atual
+        #     cameraPos_antes[0] = cameraPos[0]
+        #     cameraPos_antes[2] = cameraPos[2]
+        # else: # Se raio atual for maior q raio maximo
+        #     # Mantém a posição anterior
+        #     cameraPos[0] = cameraPos_antes[0]
+        #     cameraPos[2] = cameraPos_antes[2]
 
-        global fov, near, far, polygonal_mode
-        # Tecla P para ativar/desativar modo poligonal  
-        if key == 80 and action==1:
-            polygonal_mode = not(polygonal_mode)
-        # Tecla F para aumentar FOV
-        if key == 70 and (action==1 or action==2): # tecla F
-            fov += 1
-        # Tecla G para diminuir FOV
-        if key == 71 and (action==1 or action==2): # tecla G
-            fov -= 1
-        # Tecla C para aumentar NEAR
-        if key == 67 and (action==1 or action==2): # tecla C
-            near *= 1.05
-        # Tecla V para diminuir NEAR
-        if key == 86 and (action==1 or action==2): # tecla V
-            near /= 1.05
-        # Tecla B para aumentar FAR    
-        if key == 66 and (action==1 or action==2): # tecla B
-            far *= 1.05
-        # Tecla N para diminuir FAR   
-        if key == 78 and (action==1 or action==2): # tecla N
-            far /= 1.05
-              
+        global light_mode, ka_mult
+
+        # Tecla L para ativar/desativar luz colorida 
+        if key == 76 and action==1:
+            light_mode = not(light_mode)
+            print('Luzes coloridas:', light_mode)
+        # Tecla P para aumentar luz ambiente
+        if key == 80 and (action==1 or action==2): # tecla P
+            ka_mult += 0.2
+            print('Luz ambiente:', ka_mult)
+        # Tecla U para diminuir luz ambiente
+        if key == 85 and (action==1 or action==2): # tecla U
+            ka_mult -= 0.2
+            print('Luz ambiente:', ka_mult)
+
+        # print('ka_mult',ka_mult)
+        # print('tecla',key,scancode,action,mods)
                      
     # Define eventos do mouse
     def mouse_event(window, xpos, ypos):

@@ -15,6 +15,7 @@ def load_model_from_file(filename):
     """Loads a Wavefront OBJ file. """
     objects = {}
     vertices = []
+    normals = []
     texture_coords = []
     faces = []
 
@@ -31,6 +32,9 @@ def load_model_from_file(filename):
         if values[0] == 'v':
             vertices.append(values[1:4])
 
+        ### recuperando vertices
+        if values[0] == 'vn':
+            normals.append(values[1:4])
 
         ### recuperando coordenadas de textura
         elif values[0] == 'vt':
@@ -42,20 +46,23 @@ def load_model_from_file(filename):
         elif values[0] == 'f':
             face = []
             face_texture = []
+            face_normals = []
             for v in values[1:]:
                 w = v.split('/')
                 face.append(int(w[0]))
+                face_normals.append(int(w[2]))
                 if len(w) >= 2 and len(w[1]) > 0:
                     face_texture.append(int(w[1]))
                 else:
                     face_texture.append(0)
 
-            faces.append((face, face_texture, material))
+            faces.append((face, face_texture, face_normals, material))
 
     model = {}
     model['vertices'] = vertices
     model['texture'] = texture_coords
     model['faces'] = faces
+    model['normals'] = normals
 
     return model
 
@@ -89,6 +96,7 @@ def tex_path(mod,tex):
 # Lista de vertices e coordenadas da textura
 vertices_list = []    
 textures_coord_list = []
+normals_list = []  
 
 # contador absoluto de texturas inseridas
 texture_counter = 0
@@ -119,14 +127,16 @@ def declare_obj(model, textures):
     faces_visited = []
     vertex_index[model] = []
     for face in modelo['faces']:
-        if face[2] not in faces_visited:
-            print("{:27} {} {:5}".format(face[2],'- Vertice inicial:', len(vertices_list)))
+        if face[3] not in faces_visited:
+            print("{:27} {} {:5}".format(face[3],'- Vertice inicial:', len(vertices_list)))
             vertex_index[model].append(len(vertices_list))
-            faces_visited.append(face[2])
+            faces_visited.append(face[3])
         for vertice_id in face[0]:
             vertices_list.append( modelo['vertices'][vertice_id-1] )
         for texture_id in face[1]:
             textures_coord_list.append( modelo['texture'][texture_id-1] )
+        for normal_id in face[2]:
+            normals_list.append( modelo['normals'][normal_id-1] )
     print("{} {:20} {} {:1}".format('Fim de',model,'- Vertice final  :', len(vertices_list)))  
     vertex_index[model].append(len(vertices_list))
 
@@ -160,6 +170,23 @@ def draw_obj(modelo, mat_model):
 
         # desenha o modelo
         glDrawArrays(GL_TRIANGLES, vertex_index[modelo][i],vertex_index[modelo][1+i]-vertex_index[modelo][i] ) ## renderizando
+
+
+def set_light(ka, kd, ks, ns):
+    
+    loc_ka = glGetUniformLocation(program, "ka") # recuperando localizacao da variavel ka na GPU
+    glUniform1f(loc_ka, ka) ### envia ka pra gpu
+    
+    loc_kd = glGetUniformLocation(program, "kd") # recuperando localizacao da variavel kd na GPU
+    glUniform1f(loc_kd, kd) ### envia kd pra gpu    
+    
+    loc_ks = glGetUniformLocation(program, "ks") # recuperando localizacao da variavel ks na GPU
+    glUniform1f(loc_ks, ks) ### envia ns pra gpu        
+    
+    loc_ns = glGetUniformLocation(program, "ns") # recuperando localizacao da variavel ns na GPU
+    glUniform1f(loc_ns, ns) ### envia ns pra gpu            
+    
+
 
 
 # Matriz model
@@ -201,48 +228,86 @@ def draw_sky(rotacao_inc):
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
 
 
+    #### define parametros de ilumincao do modelo
+    ka = 0.7 # coeficiente de reflexao ambiente do modelo
+    kd = 0 # coeficiente de reflexao difusa do modelo
+    ks = 0 # coeficiente de reflexao especular do modelo
+    ns = 1 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
     draw_obj('skydome.obj', mat_model)
 
 # Função para desenhar as naves espaciais
-def draw_spaceships(tz_inc):
-    # rotacao
-    angle = 0.0;
-    r_x = 0.0; r_y = 0.0; r_z = 1.0;
+def draw_spaceships(inc,ka_mult):
+    # rotacaowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+    angle = -math.degrees(inc/50) 
+    r_x = 0.0; r_y = 1.0; r_z = 0.0;
     # translacao
-    t_x = .0 ; t_y = 15.0; t_z = -15 +tz_inc/15;
+    t_x = 10*math.cos(inc/50) ; t_y = 10.0; t_z = 10*math.sin(inc/50);
     # escala
     s_x = 1.0; s_y = 1.0; s_z = 1.0;
 
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
+    
+    #### define parametros de ilumincao do modelo
+    ka = 0.5*ka_mult # coeficiente de reflexao ambiente do modelo
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 0.3 # coeficiente de reflexao especular do modelo
+    ns = 2.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+    
     draw_obj('spaceship.obj', mat_model)
 
+    loc_light_pos = glGetUniformLocation(program, "lightPos2") # recuperando localizacao da variavel lightPos na GPU
+    glUniform3f(loc_light_pos, t_x, t_y-0.3, t_z) ### posicao da fonte de luz
 
+
+
+    # rotacao
+    angle = 0.0;
+    r_x = 0.0; r_y = 0.0; r_z = 1.0;
     # translacao
-    t_x = 300 ; t_y = 300.0; t_z = +200 -tz_inc/10;
+    t_x = 300 ; t_y = 300.0; t_z = +200 -inc/10;
     # escala
     s_x = 5.0; s_y = 5.0; s_z = 5.0;
+    
+    #### define parametros de ilumincao do modelo
+    ka = 0.5*ka_mult # coeficiente de reflexao ambiente do modelo
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 0.3 # coeficiente de reflexao especular do modelo
+    ns = 2.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+
     
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     draw_obj('mothership.obj', mat_model)
 
+    loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
+    glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
+
 # Função para desenhar a cena estática
-def draw_scene():
+def draw_static(ka_mult):
     # rotacao
     angle = 0.0;
     r_x = 0.0; r_y = 0.0; r_z = 1.0;
-    # translacao
-    t_x = 0.0 ; t_y = -2.0; t_z = 0.0;
     # escala
     s_x = 1.0; s_y = 1.0; s_z = 1.0;
-    # insere floresta e montanhas ao redor
-    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
-    draw_obj('pine_forest.obj', mat_model)
-    draw_obj('mountain.obj', mat_model)
-
     # translacao
     t_x = 0.4 ; t_y = -2.3; t_z = 0.0;
     # insere arvore interna
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
+
+
+    #### define parametros de ilumincao do modelo
+    ka = 0.1*ka_mult # coeficiente de reflexao ambiente do modelo
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 0.3 # coeficiente de reflexao especular do modelo
+    ns = 4.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+     
     draw_obj('tree.obj', mat_model)
 
     # translacao
@@ -250,6 +315,15 @@ def draw_scene():
     # insere cabana
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     draw_obj('hut.obj', mat_model)
+
+
+    #### define parametros de ilumincao do modelo
+    ka = 0.1*ka_mult # coeficiente de reflexao ambiente do modelo
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 0.7 # coeficiente de reflexao especular do modelo
+    ns = 8.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
 
     # translacao
     t_x = 0.0 ; t_y = -2.0; t_z = 0.0;
@@ -259,6 +333,28 @@ def draw_scene():
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     draw_obj('remains.obj', mat_model)
 
+
+    #### define parametros de ilumincao do modelo
+    ka = 0.1*ka_mult # coeficiente de reflexao ambiente do modelo
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 1 # coeficiente de reflexao especular do modelo
+    ns = 32 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+
+    # rotacao
+    angle = -180.0;
+    r_x = 0.0; r_y = 1.0; r_z = 0.0;
+    # translacao
+    t_x = 1 ; t_y = -1.95 ; t_z = 8;
+    # escala
+    s_x = 0.1; s_y = 0.1; s_z = 0.1;
+    # insere alien
+    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
+    draw_obj('alien.obj', mat_model)
+
+# desenha forno e luz 
+def draw_stove(ka_mult):
     # rotacao
     angle = 45.0;
     r_x = 0.0; r_y = 1.0; r_z = 0.0;
@@ -268,14 +364,40 @@ def draw_scene():
     s_x = 10; s_y = 10; s_z = 10;
     # insere forno
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
+
+    ka = 0.1*ka_mult # coeficiente de reflexao ambiente do modelo
+    kd = 0.8 # coeficiente de reflexao difusa do modelo
+    ks = 8 # coeficiente de reflexao especular do modelo
+    ns = 1.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+
+    #loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
+    
+    #glUniform3f(loc_light_pos, t_x, t_y+0.1, t_z) ### posicao da fonte de luz
+    
     draw_obj('stove.obj', mat_model)
 
+
+
+def draw_forest(ka_mult):
     # rotacao
-    angle = -180.0;
+    angle = 0.0;
+    r_x = 0.0; r_y = 0.0; r_z = 1.0;
     # translacao
-    t_x = 1 ; t_y = -1.95 ; t_z = 8;
+    t_x = 0.0 ; t_y = -2.0; t_z = 0.0;
     # escala
-    s_x = 0.1; s_y = 0.1; s_z = 0.1;
-    # insere alien
+    s_x = 1.0; s_y = 1.0; s_z = 1.0;
+    # insere floresta e montanhas ao redor
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
-    draw_obj('alien.obj', mat_model)
+
+    #### define parametros de ilumincao do modelo
+    ka = 0.05*ka_mult # coeficiente de reflexao ambiente do modelo
+    kd = 0.6 # coeficiente de reflexao difusa do modelo
+    ks = 0.3 # coeficiente de reflexao especular do modelo
+    ns = 4.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+
+    draw_obj('pine_forest.obj',mat_model)
+    draw_obj('mountain.obj',mat_model)
