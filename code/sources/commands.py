@@ -56,6 +56,8 @@ cameraPos_antes = glm.vec3(0.0,  1.0,  0.0);
 # Iluminação
 light_mode = 0
 ka_mult = 1
+tx = 1
+tz = 1
 
 def commands():
 
@@ -98,7 +100,7 @@ def commands():
         #     cameraPos[0] = cameraPos_antes[0]
         #     cameraPos[2] = cameraPos_antes[2]
 
-        global light_mode, ka_mult
+        global light_mode, ka_mult, tx, tz
 
         # Tecla L para ativar/desativar luz colorida 
         if key == 76 and action==1:
@@ -113,7 +115,21 @@ def commands():
             ka_mult -= 0.2
             print('Luz ambiente:', ka_mult)
 
-        # print('ka_mult',ka_mult)
+
+        # if key == 263 and (action==1 or action==2): # direita
+        #     tx += 0.1
+
+        # if key == 262 and (action==1 or action==2): # esquerda
+        #     tx -= 0.1
+        # print('tx tz',tx,tz)
+
+        # if key == 265 and (action==1 or action==2): # cima
+        #     tz += 0.1
+        # if key == 264 and (action==1 or action==2): # baixo
+        #     tz -= 0.1
+
+        # print('tx tz',tx,tz)
+
         # print('tecla',key,scancode,action,mods)
                      
     # Define eventos do mouse

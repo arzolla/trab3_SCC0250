@@ -158,6 +158,11 @@ while not glfw.window_should_close(window):
     loc_light_mode = glGetUniformLocation(program, "light_mode") 
     glUniform1f(loc_light_mode, cmd.light_mode) ### envia modo pra gpu
 
+    # intensidade da luz 2
+    intensity2 = np.random.normal(0.3,0.1) # distribuiçao normal da intensidade
+    # recuperando localizacao do multiplicador de intensidade
+    loc_intensity2 = glGetUniformLocation(program, "intensity2") 
+    glUniform1f(loc_intensity2, intensity2) ### envia intensidade pra gpu
 
 
     # Insere o céu
