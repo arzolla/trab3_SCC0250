@@ -238,7 +238,7 @@ def draw_sky(rotacao_inc):
     draw_obj('skydome.obj', mat_model)
 
 # Função para desenhar as naves espaciais
-def draw_spaceships(inc):
+def draw_spaceships(inc,ka_mult):
     # rotacaowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
     angle = -math.degrees(inc/50) 
     r_x = 0.0; r_y = 1.0; r_z = 0.0;
@@ -250,7 +250,7 @@ def draw_spaceships(inc):
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     
     #### define parametros de ilumincao do modelo
-    ka = 0.5 # coeficiente de reflexao ambiente do modelo
+    ka = 0.5*ka_mult # coeficiente de reflexao ambiente do modelo
     kd = 1 # coeficiente de reflexao difusa do modelo
     ks = 0.3 # coeficiente de reflexao especular do modelo
     ns = 2.0 # expoente de reflexao especular
@@ -273,7 +273,7 @@ def draw_spaceships(inc):
     s_x = 5.0; s_y = 5.0; s_z = 5.0;
     
     #### define parametros de ilumincao do modelo
-    ka = 0.5 # coeficiente de reflexao ambiente do modelo
+    ka = 0.5*ka_mult # coeficiente de reflexao ambiente do modelo
     kd = 1 # coeficiente de reflexao difusa do modelo
     ks = 0.3 # coeficiente de reflexao especular do modelo
     ns = 2.0 # expoente de reflexao especular
@@ -288,7 +288,7 @@ def draw_spaceships(inc):
     glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
 
 # Função para desenhar a cena estática
-def draw_static():
+def draw_static(ka_mult):
     # rotacao
     angle = 0.0;
     r_x = 0.0; r_y = 0.0; r_z = 1.0;
@@ -301,7 +301,7 @@ def draw_static():
 
 
     #### define parametros de ilumincao do modelo
-    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    ka = 0.1*ka_mult # coeficiente de reflexao ambiente do modelo
     kd = 1 # coeficiente de reflexao difusa do modelo
     ks = 0.3 # coeficiente de reflexao especular do modelo
     ns = 4.0 # expoente de reflexao especular
@@ -318,7 +318,7 @@ def draw_static():
 
 
     #### define parametros de ilumincao do modelo
-    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    ka = 0.1*ka_mult # coeficiente de reflexao ambiente do modelo
     kd = 1 # coeficiente de reflexao difusa do modelo
     ks = 0.7 # coeficiente de reflexao especular do modelo
     ns = 8.0 # expoente de reflexao especular
@@ -335,7 +335,7 @@ def draw_static():
 
 
     #### define parametros de ilumincao do modelo
-    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    ka = 0.1*ka_mult # coeficiente de reflexao ambiente do modelo
     kd = 1 # coeficiente de reflexao difusa do modelo
     ks = 1 # coeficiente de reflexao especular do modelo
     ns = 32 # expoente de reflexao especular
@@ -354,7 +354,7 @@ def draw_static():
     draw_obj('alien.obj', mat_model)
 
 # desenha forno e luz 
-def draw_stove():
+def draw_stove(ka_mult):
     # rotacao
     angle = 45.0;
     r_x = 0.0; r_y = 1.0; r_z = 0.0;
@@ -365,7 +365,7 @@ def draw_stove():
     # insere forno
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
 
-    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    ka = 0.1*ka_mult # coeficiente de reflexao ambiente do modelo
     kd = 0.8 # coeficiente de reflexao difusa do modelo
     ks = 8 # coeficiente de reflexao especular do modelo
     ns = 1.0 # expoente de reflexao especular
@@ -380,7 +380,7 @@ def draw_stove():
 
 
 
-def draw_forest():
+def draw_forest(ka_mult):
     # rotacao
     angle = 0.0;
     r_x = 0.0; r_y = 0.0; r_z = 1.0;
@@ -392,7 +392,7 @@ def draw_forest():
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
 
     #### define parametros de ilumincao do modelo
-    ka = 0.05 # coeficiente de reflexao ambiente do modelo
+    ka = 0.05*ka_mult # coeficiente de reflexao ambiente do modelo
     kd = 0.6 # coeficiente de reflexao difusa do modelo
     ks = 0.3 # coeficiente de reflexao especular do modelo
     ns = 4.0 # expoente de reflexao especular

@@ -153,16 +153,23 @@ while not glfw.window_should_close(window):
     if cmd.polygonal_mode==False:
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL)
     
+    # ativar modo de luz colorida
+    # recuperando localizacao do flag light_mode
+    loc_light_mode = glGetUniformLocation(program, "light_mode") 
+    glUniform1f(loc_light_mode, cmd.light_mode) ### envia modo pra gpu
+
+
+
     # Insere o céu
     obj.draw_sky(move_inc)
 
     # Insere as naves espaciais
-    obj.draw_spaceships(5*move_inc)
+    obj.draw_spaceships(5*move_inc,cmd.ka_mult)
 
     # Insere a cena estática
-    obj.draw_forest()
-    obj.draw_stove()
-    obj.draw_static()
+    obj.draw_forest(cmd.ka_mult)
+    obj.draw_stove(cmd.ka_mult)
+    obj.draw_static(cmd.ka_mult)
 
 
     # Incremento do movimento

@@ -104,13 +104,13 @@ def commands():
         if key == 76 and action==1:
             light_mode = not(light_mode)
         # Tecla P para aumentar luz ambiente
-        if key == 70 and (action==1 or action==2): # tecla F
-            ka_mult *= 1.1
+        if key == 80 and (action==1 or action==2): # tecla P
+            ka_mult *= 1.2
         # Tecla U para diminuir luz ambiente
-        if key == 85 and (action==1 or action==2): # tecla G
-            ka_mult *= 0.9
+        if key == 85 and (action==1 or action==2): # tecla U
+            ka_mult *= 0.8
 
-
+        print('ka_mult',ka_mult)
         print('tecla',key,scancode,action,mods)
                      
     # Define eventos do mouse
