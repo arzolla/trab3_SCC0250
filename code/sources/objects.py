@@ -259,7 +259,7 @@ def draw_spaceships(inc,ka_mult):
     
     draw_obj('spaceship.obj', mat_model)
 
-    loc_light_pos = glGetUniformLocation(program, "lightPos2") # recuperando localizacao da variavel lightPos na GPU
+    loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
     glUniform3f(loc_light_pos, t_x, t_y-0.3, t_z) ### posicao da fonte de luz
 
 
@@ -284,8 +284,6 @@ def draw_spaceships(inc,ka_mult):
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     draw_obj('mothership.obj', mat_model)
 
-    loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
-    glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
 
 # Função para desenhar a cena estática
 def draw_static(ka_mult):
@@ -372,9 +370,9 @@ def draw_stove(ka_mult):
     
     set_light(ka, kd, ks, ns)
 
-    #loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
-    
-    #glUniform3f(loc_light_pos, t_x, t_y+0.1, t_z) ### posicao da fonte de luz
+    loc_light_pos = glGetUniformLocation(program, "lightPos2") # recuperando localizacao da variavel lightPos na GPU
+    glUniform3f(loc_light_pos, t_x+0.4, t_y, t_z+0.4) ### posicao da fonte de luz
+
     
     draw_obj('stove.obj', mat_model)
 

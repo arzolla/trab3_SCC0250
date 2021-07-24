@@ -46,12 +46,13 @@ fragment_code = """
         
         // extra
         uniform float light_mode; // ativar iluminação colorida
-
+        uniform float intensity2; // ativar iluminação colorida
+        //float intensity2 = 0.4;
 
         // parametro com a cor da(s) fonte(s) de iluminacao
         vec3 lightColor = vec3(1.0, 1.0, 1.0);
-        vec3 lightColor1 = vec3(1.0, 0.3, 0.3);
-        vec3 lightColor2 = vec3(0.3, 1.0, 0.3);
+        vec3 lightColor1 = vec3(0.3, 1.0, 0.3);
+        vec3 lightColor2 = vec3(0.89, 0.34, 0.13);
 
         // parametros recebidos do vertex shader
         varying vec2 out_texture; // recebido do vertex shader
@@ -113,7 +114,7 @@ fragment_code = """
             // aplicando o modelo de iluminacao
             vec4 texture = texture2D(samplerTexture, out_texture);
             //vec4 result = vec4((ambient + diffuse1 + specular1),1.0) * texture; // aplica iluminacao
-            vec4 result = vec4((ambient + 0.6*(diffuse1 + specular1) + diffuse2 + specular2),1.0) * texture; // aplica iluminacao
+            vec4 result = vec4((ambient + intensity2*(diffuse2 + specular2) + diffuse1 + specular1),1.0) * texture; // aplica iluminacao
             if(result.a < 0.3)
                 discard;
             gl_FragColor = result;
