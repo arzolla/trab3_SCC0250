@@ -42,13 +42,10 @@ Execute o arquivo ```/code/trab2.py``` para rodar o programa
 
 <kbd>Mouse</kbd> Para mover o ângulo da câmera
 
-<kbd>P</kbd> Para ativar/desativar modo poligonal
+<kbd>P</kbd><kbd>U</kbd> Para aumentar/diminuir iluminação ambiente
 
-<kbd>F</kbd><kbd>G</kbd> Para aumentar/diminuir o FOV
+<kbd>L</kbd> Para ativar iluminação colorida
 
-<kbd>C</kbd><kbd>V</kbd> Para aumentar/diminuir o NEAR
-
-<kbd>B</kbd><kbd>N</kbd> Para aumentar/diminuir o FAR
 
 <br />
 
