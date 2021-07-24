@@ -96,7 +96,7 @@ vertices['position'] = obj.vertices_list
 # Envia lista de vértices para buffer da GPU
 sb.vertex_buffer(vertices)
 
-# Declara variável para armazenar lista de coordenadas de textura
+# Decwwwwwwwwwwwwwwwwwwwlara variável para armazenar lista de coordenadas de textura
 textures = np.zeros(len(obj.textures_coord_list), [("position", np.float32, 2)]) # duas coordenadas
 # Obtém lista de coordenadas de textura do módulo objetcs.py
 textures['position'] = obj.textures_coord_list

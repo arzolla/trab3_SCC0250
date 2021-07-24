@@ -239,11 +239,11 @@ def draw_sky(rotacao_inc):
 
 # Função para desenhar as naves espaciais
 def draw_spaceships(inc):
-    # rotacao
-    angle = inc;
-    r_x = 0.0; r_y = 0.0; r_z = 1.0;
+    # rotacaowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+    angle = -math.degrees(inc/50) 
+    r_x = 0.0; r_y = 1.0; r_z = 0.0;
     # translacao
-    t_x = 10*math.sin(inc/50) ; t_y = 10.0; t_z = 10*math.cos(inc/50);
+    t_x = 10*math.cos(inc/50) ; t_y = 10.0; t_z = 10*math.sin(inc/50);
     # escala
     s_x = 1.0; s_y = 1.0; s_z = 1.0;
 
@@ -260,11 +260,14 @@ def draw_spaceships(inc):
     draw_obj('spaceship.obj', mat_model)
 
     loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
-    glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
+    glUniform3f(loc_light_pos, t_x, t_y-0.3, t_z) ### posicao da fonte de luz
 
     loc_light_pos = glGetUniformLocation(program, "lightPos2") # recuperando localizacao da variavel lightPos na GPU
     glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
 
+    # rotacao
+    angle = 0.0;
+    r_x = 0.0; r_y = 0.0; r_z = 1.0;
     # translacao
     t_x = 300 ; t_y = 300.0; t_z = +200 -inc/10;
     # escala
