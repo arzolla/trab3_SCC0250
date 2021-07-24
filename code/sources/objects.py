@@ -229,7 +229,7 @@ def draw_sky(rotacao_inc):
 
 
     #### define parametros de ilumincao do modelo
-    ka = 1 # coeficiente de reflexao ambiente do modelo
+    ka = 0.7 # coeficiente de reflexao ambiente do modelo
     kd = 0 # coeficiente de reflexao difusa do modelo
     ks = 0 # coeficiente de reflexao especular do modelo
     ns = 1 # expoente de reflexao especular
@@ -250,10 +250,10 @@ def draw_spaceships(inc):
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     
     #### define parametros de ilumincao do modelo
-    ka = 0.1 # coeficiente de reflexao ambiente do modelo
-    kd = 0.2 # coeficiente de reflexao difusa do modelo
-    ks = 5 # coeficiente de reflexao especular do modelo
-    ns = 32.0 # expoente de reflexao especular
+    ka = 0.5 # coeficiente de reflexao ambiente do modelo
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 0.3 # coeficiente de reflexao especular do modelo
+    ns = 2.0 # expoente de reflexao especular
     
     set_light(ka, kd, ks, ns)
     
@@ -262,8 +262,7 @@ def draw_spaceships(inc):
     loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
     glUniform3f(loc_light_pos, t_x, t_y-0.3, t_z) ### posicao da fonte de luz
 
-    loc_light_pos = glGetUniformLocation(program, "lightPos2") # recuperando localizacao da variavel lightPos na GPU
-    glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
+
 
     # rotacao
     angle = 0.0;
@@ -274,16 +273,19 @@ def draw_spaceships(inc):
     s_x = 5.0; s_y = 5.0; s_z = 5.0;
     
     #### define parametros de ilumincao do modelo
-    ka = 0.1 # coeficiente de reflexao ambiente do modelo
-    kd = 0.2 # coeficiente de reflexao difusa do modelo
-    ks = 1 # coeficiente de reflexao especular do modelo
+    ka = 0.5 # coeficiente de reflexao ambiente do modelo
+    kd = 0 # coeficiente de reflexao difusa do modelo
+    ks = 0 # coeficiente de reflexao especular do modelo
     ns = 4.0 # expoente de reflexao especular
     
     set_light(ka, kd, ks, ns)
 
-
+    
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     draw_obj('mothership.obj', mat_model)
+
+    loc_light_pos = glGetUniformLocation(program, "lightPos2") # recuperando localizacao da variavel lightPos na GPU
+    glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
 
 # Função para desenhar a cena estática
 def draw_static():
@@ -334,9 +336,9 @@ def draw_static():
 
     #### define parametros de ilumincao do modelo
     ka = 0.1 # coeficiente de reflexao ambiente do modelo
-    kd = 0.5 # coeficiente de reflexao difusa do modelo
-    ks = 0.4 # coeficiente de reflexao especular do modelo
-    ns = 32.0 # expoente de reflexao especular
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 1 # coeficiente de reflexao especular do modelo
+    ns = 32 # expoente de reflexao especular
     
     set_light(ka, kd, ks, ns)
 
@@ -363,10 +365,8 @@ def draw_stove():
     # insere forno
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
 
-
-    #### define parametros de ilumincao do modelo
-    ka = 0.1 # coeficiente de reflexao ambiente do modelo
-    kd = 0.5 # coeficiente de reflexao difusa do modelo
+    ka = 0.3 # coeficiente de reflexao ambiente do modelo
+    kd = 0.6 # coeficiente de reflexao difusa do modelo
     ks = 8 # coeficiente de reflexao especular do modelo
     ns = 1.0 # expoente de reflexao especular
     
@@ -392,8 +392,8 @@ def draw_forest():
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
 
     #### define parametros de ilumincao do modelo
-    ka = 0.1 # coeficiente de reflexao ambiente do modelo
-    kd = 1 # coeficiente de reflexao difusa do modelo
+    ka = 0.05 # coeficiente de reflexao ambiente do modelo
+    kd = 0.6 # coeficiente de reflexao difusa do modelo
     ks = 0.3 # coeficiente de reflexao especular do modelo
     ns = 4.0 # expoente de reflexao especular
     
