@@ -98,7 +98,10 @@ fragment_code = """
             
             // aplicando o modelo de iluminacao
             vec4 texture = texture2D(samplerTexture, out_texture);
-            vec4 result = vec4((ambient + diffuse1 + diffuse2 + specular1 + specular2),1.0) * texture; // aplica iluminacao
+            vec4 result = vec4(( diffuse1 + specular1),1.0) * texture; // aplica iluminacao
+            //vec4 result = vec4((ambient + diffuse1 + diffuse2 + specular1 + specular2),1.0) * texture; // aplica iluminacao
+            if(result.a < 0.3)
+                discard;
             gl_FragColor = result;
 
         }
@@ -165,7 +168,6 @@ def vertex_buffer(vertices):
     glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
 
     # Bind the position attribute
-    # --------------------------------------
     stride = vertices.strides[0]
     offset = ctypes.c_void_p(0)
 
@@ -183,7 +185,6 @@ def texture_buffer(textures):
     glBufferData(GL_ARRAY_BUFFER, textures.nbytes, textures, GL_STATIC_DRAW)
 
     # Bind the position attribute
-    # --------------------------------------
     stride = textures.strides[0]
     offset = ctypes.c_void_p(0)
 
@@ -192,6 +193,19 @@ def texture_buffer(textures):
 
     glVertexAttribPointer(loc_texture_coord, 2, GL_FLOAT, False, stride, offset)
 
+# Função para configurar os buffers de iluminação
+def normals_buffer(normals):
 
+    # Upload coordenadas normals de cada vertice
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[2])
+    glBufferData(GL_ARRAY_BUFFER, normals.nbytes, normals, GL_STATIC_DRAW)
 
+    # Bind the position attribute  
+    stride = normals.strides[0]
+    offset = ctypes.c_void_p(0)
+
+    loc_normals_coord = glGetAttribLocation(program, "normals")
+    glEnableVertexAttribArray(loc_normals_coord)
+    
+    glVertexAttribPointer(loc_normals_coord, 3, GL_FLOAT, False, stride, offset)
 

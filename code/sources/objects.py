@@ -189,7 +189,6 @@ def set_light(ka, kd, ks, ns):
 
 
 
-
 # Matriz model
 def model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z):
     
@@ -229,48 +228,81 @@ def draw_sky(rotacao_inc):
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
 
 
+    #### define parametros de ilumincao do modelo
+    ka = 1 # coeficiente de reflexao ambiente do modelo
+    kd = 0 # coeficiente de reflexao difusa do modelo
+    ks = 0 # coeficiente de reflexao especular do modelo
+    ns = 1 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
     draw_obj('skydome.obj', mat_model)
 
 # Função para desenhar as naves espaciais
-def draw_spaceships(tz_inc):
+def draw_spaceships(inc):
     # rotacao
     angle = 0.0;
     r_x = 0.0; r_y = 0.0; r_z = 1.0;
     # translacao
-    t_x = .0 ; t_y = 15.0; t_z = -15 +tz_inc/15;
+    t_x = 10*math.sin(inc/10) ; t_y = 10.0; t_z = 10*math.cos(inc/10);
     # escala
     s_x = 1.0; s_y = 1.0; s_z = 1.0;
 
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
+    
+    #### define parametros de ilumincao do modelo
+    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    kd = 0.2 # coeficiente de reflexao difusa do modelo
+    ks = 5 # coeficiente de reflexao especular do modelo
+    ns = 32.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+    
     draw_obj('spaceship.obj', mat_model)
 
+    loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
+    glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
+
+    loc_light_pos = glGetUniformLocation(program, "lightPos2") # recuperando localizacao da variavel lightPos na GPU
+    glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
 
     # translacao
-    t_x = 300 ; t_y = 300.0; t_z = +200 -tz_inc/10;
+    t_x = 300 ; t_y = 300.0; t_z = +200 -inc/10;
     # escala
     s_x = 5.0; s_y = 5.0; s_z = 5.0;
     
+    #### define parametros de ilumincao do modelo
+    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    kd = 0.2 # coeficiente de reflexao difusa do modelo
+    ks = 1 # coeficiente de reflexao especular do modelo
+    ns = 4.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+
+
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     draw_obj('mothership.obj', mat_model)
 
 # Função para desenhar a cena estática
-def draw_scene():
+def draw_static():
     # rotacao
     angle = 0.0;
     r_x = 0.0; r_y = 0.0; r_z = 1.0;
-    # translacao
-    t_x = 0.0 ; t_y = -2.0; t_z = 0.0;
     # escala
     s_x = 1.0; s_y = 1.0; s_z = 1.0;
-    # insere floresta e montanhas ao redor
-    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
-    draw_obj('pine_forest.obj', mat_model)
-    draw_obj('mountain.obj', mat_model)
-
     # translacao
     t_x = 0.4 ; t_y = -2.3; t_z = 0.0;
     # insere arvore interna
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
+
+
+    #### define parametros de ilumincao do modelo
+    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 0.3 # coeficiente de reflexao especular do modelo
+    ns = 4.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+     
     draw_obj('tree.obj', mat_model)
 
     # translacao
@@ -278,6 +310,15 @@ def draw_scene():
     # insere cabana
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     draw_obj('hut.obj', mat_model)
+
+
+    #### define parametros de ilumincao do modelo
+    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 0.7 # coeficiente de reflexao especular do modelo
+    ns = 8.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
 
     # translacao
     t_x = 0.0 ; t_y = -2.0; t_z = 0.0;
@@ -287,6 +328,28 @@ def draw_scene():
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     draw_obj('remains.obj', mat_model)
 
+
+    #### define parametros de ilumincao do modelo
+    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    kd = 0.5 # coeficiente de reflexao difusa do modelo
+    ks = 0.4 # coeficiente de reflexao especular do modelo
+    ns = 32.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+
+    # rotacao
+    angle = -180.0;
+    r_x = 0.0; r_y = 1.0; r_z = 0.0;
+    # translacao
+    t_x = 1 ; t_y = -1.95 ; t_z = 8;
+    # escala
+    s_x = 0.1; s_y = 0.1; s_z = 0.1;
+    # insere alien
+    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
+    draw_obj('alien.obj', mat_model)
+
+# desenha forno e luz 
+def draw_stove():
     # rotacao
     angle = 45.0;
     r_x = 0.0; r_y = 1.0; r_z = 0.0;
@@ -296,20 +359,25 @@ def draw_scene():
     s_x = 10; s_y = 10; s_z = 10;
     # insere forno
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
+
+
+    #### define parametros de ilumincao do modelo
+    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    kd = 0.5 # coeficiente de reflexao difusa do modelo
+    ks = 8 # coeficiente de reflexao especular do modelo
+    ns = 1.0 # expoente de reflexao especular
+    
+    set_light(ka, kd, ks, ns)
+
+    #loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
+    
+    #glUniform3f(loc_light_pos, t_x, t_y+0.1, t_z) ### posicao da fonte de luz
+    
     draw_obj('stove.obj', mat_model)
 
-    # rotacao
-    angle = -180.0;
-    # translacao
-    t_x = 1 ; t_y = -1.95 ; t_z = 8;
-    # escala
-    s_x = 0.1; s_y = 0.1; s_z = 0.1;
-    # insere alien
-    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
-    draw_obj('alien.obj', mat_model)
 
 
-def draw_mount():
+def draw_forest():
     # rotacao
     angle = 0.0;
     r_x = 0.0; r_y = 0.0; r_z = 1.0;
@@ -319,35 +387,14 @@ def draw_mount():
     s_x = 1.0; s_y = 1.0; s_z = 1.0;
     # insere floresta e montanhas ao redor
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
-    loc_model = glGetUniformLocation(program, "model")
-    glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
 
     #### define parametros de ilumincao do modelo
-    ka = 0.3 # coeficiente de reflexao ambiente do modelo
-    kd = 0.3 # coeficiente de reflexao difusa do modelo
-    ks = 0.9 # coeficiente de reflexao especular do modelo
-    ns = 64.0 # expoente de reflexao especular
+    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 0.3 # coeficiente de reflexao especular do modelo
+    ns = 4.0 # expoente de reflexao especular
     
     set_light(ka, kd, ks, ns)
 
-
-       
-    # Insere os modelos de acordo com o número de indices de vértice
-    # Caso haja por exemplo três índices, isso significa q há dois 
-    # objetos a serem inseridos
-    modelo = 'pine_forest.obj'
-    for i in range(len(vertex_index[modelo])-1):
-        #define id da textura do modelo
-        glBindTexture(GL_TEXTURE_2D, texture_index[modelo][i])
-
-        # desenha o modelo
-        glDrawArrays(GL_TRIANGLES, vertex_index[modelo][i],vertex_index[modelo][1+i]-vertex_index[modelo][i] ) ## renderizando
-
-
-    modelo = 'mountain.obj'
-    for i in range(len(vertex_index[modelo])-1):
-        #define id da textura do modelo
-        glBindTexture(GL_TEXTURE_2D, texture_index[modelo][i])
-
-        # desenha o modelo
-        glDrawArrays(GL_TRIANGLES, vertex_index[modelo][i],vertex_index[modelo][1+i]-vertex_index[modelo][i] ) ## renderizando
+    draw_obj('pine_forest.obj',mat_model)
+    draw_obj('mountain.obj',mat_model)

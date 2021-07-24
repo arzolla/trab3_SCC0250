@@ -57,7 +57,7 @@ textures = glGenTextures(qtd_texturas)
 
 # Declaração dos objetos a partir de modelo e texturas 
 
-obj.declare_obj('chao.obj',['grass.jpg'])
+# obj.declare_obj('chao.obj',['grass.jpg'])
 
 obj.declare_obj('hut.obj',['body.jpg','frame.jpg','roof_floor.jpg'])
 
@@ -82,11 +82,12 @@ obj.declare_obj('stove.obj',['stove.jpeg'])
 # Envia variável de programa para módulo objects.py
 obj.program = program
 
+
 ##############################################
 ################### BUFFERS ##################
 
 # Declara buffers da GPU e envia para módulo shader_buffer.py
-sb.buffer = glGenBuffers(2)
+sb.buffer = glGenBuffers(3)
 
 # Declara variável para armazenar lista de vértices
 vertices = np.zeros(len(obj.vertices_list), [("position", np.float32, 3)])
@@ -101,6 +102,13 @@ textures = np.zeros(len(obj.textures_coord_list), [("position", np.float32, 2)])
 textures['position'] = obj.textures_coord_list
 # Envia lista de coordenadas de texturas para buffer da GPU
 sb.texture_buffer(textures)
+
+# Declara variável para armazenar lista de vetores normais
+normals = np.zeros(len(obj.normals_list), [("position", np.float32, 3)]) # três coordenadas
+# Obtém lista de vetores normais do módulo objetcs.py
+normals['position'] = obj.normals_list
+# Envia lista de vetores normais para buffer da GPU
+sb.normals_buffer(normals)
 
 ##############################################
 ################## COMANDOS ##################
@@ -149,10 +157,13 @@ while not glfw.window_should_close(window):
     obj.draw_sky(move_inc)
 
     # Insere as naves espaciais
-    obj.draw_spaceships(move_inc)
+    obj.draw_spaceships(5*move_inc)
 
     # Insere a cena estática
-    obj.draw_scene()
+    obj.draw_forest()
+    obj.draw_stove()
+    obj.draw_static()
+
 
     # Incremento do movimento
     move_inc += 0.1
