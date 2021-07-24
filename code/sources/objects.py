@@ -259,7 +259,7 @@ def draw_spaceships(inc):
     
     draw_obj('spaceship.obj', mat_model)
 
-    loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
+    loc_light_pos = glGetUniformLocation(program, "lightPos2") # recuperando localizacao da variavel lightPos na GPU
     glUniform3f(loc_light_pos, t_x, t_y-0.3, t_z) ### posicao da fonte de luz
 
 
@@ -274,9 +274,9 @@ def draw_spaceships(inc):
     
     #### define parametros de ilumincao do modelo
     ka = 0.5 # coeficiente de reflexao ambiente do modelo
-    kd = 0 # coeficiente de reflexao difusa do modelo
-    ks = 0 # coeficiente de reflexao especular do modelo
-    ns = 4.0 # expoente de reflexao especular
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 0.3 # coeficiente de reflexao especular do modelo
+    ns = 2.0 # expoente de reflexao especular
     
     set_light(ka, kd, ks, ns)
 
@@ -284,7 +284,7 @@ def draw_spaceships(inc):
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
     draw_obj('mothership.obj', mat_model)
 
-    loc_light_pos = glGetUniformLocation(program, "lightPos2") # recuperando localizacao da variavel lightPos na GPU
+    loc_light_pos = glGetUniformLocation(program, "lightPos1") # recuperando localizacao da variavel lightPos na GPU
     glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
 
 # Função para desenhar a cena estática
@@ -365,8 +365,8 @@ def draw_stove():
     # insere forno
     mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
 
-    ka = 0.3 # coeficiente de reflexao ambiente do modelo
-    kd = 0.6 # coeficiente de reflexao difusa do modelo
+    ka = 0.1 # coeficiente de reflexao ambiente do modelo
+    kd = 0.8 # coeficiente de reflexao difusa do modelo
     ks = 8 # coeficiente de reflexao especular do modelo
     ns = 1.0 # expoente de reflexao especular
     
